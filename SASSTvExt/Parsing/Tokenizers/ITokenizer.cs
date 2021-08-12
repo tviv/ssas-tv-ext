@@ -9,6 +9,6 @@ namespace OlapParser.Parsing.Tokenizers
 {
     public interface ITokenizer
     {
-        IEnumerable<DslToken> Tokenize(string queryDsl);
+        IEnumerable<Token> Tokenize(string queryDsl);
     }
 }

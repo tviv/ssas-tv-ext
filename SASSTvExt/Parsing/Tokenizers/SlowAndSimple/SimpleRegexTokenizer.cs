@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using OlapParser.Exceptions;
 using OlapParser.Parsing.Tokens;
 using OlapParser.Parsing.Tokens.Tokenizers.SlowAndSimple;
 
@@ -60,9 +56,9 @@ namespace OlapParser.Parsing.Tokenizers.SlowAndSimple
         }
 
 
-        public IEnumerable<DslToken> Tokenize(string lqlText)
+        public IEnumerable<Token> Tokenize(string lqlText)
         {
-            var tokens = new List<DslToken>();
+            var tokens = new List<Token>();
 
             string remainingText = lqlText;
 
@@ -71,7 +67,7 @@ namespace OlapParser.Parsing.Tokenizers.SlowAndSimple
                 var match = FindMatch(remainingText);
                 if (match.IsMatch)
                 {
-                    tokens.Add(new DslToken(match.TokenType, match.Value));
+                    tokens.Add(new Token(match.TokenType, match.Value));
                     remainingText = match.RemainingText;
                 }
                 else
@@ -83,13 +79,13 @@ namespace OlapParser.Parsing.Tokenizers.SlowAndSimple
                     else
                     {
                         var invalidTokenMatch = CreateInvalidTokenMatch(remainingText);
-                        tokens.Add(new DslToken(invalidTokenMatch.TokenType, invalidTokenMatch.Value));
+                        tokens.Add(new Token(invalidTokenMatch.TokenType, invalidTokenMatch.Value));
                         remainingText = invalidTokenMatch.RemainingText;
                     }
                 }
             }
 
-            tokens.Add(new DslToken(TokenType.SequenceTerminator, string.Empty));
+            tokens.Add(new Token(TokenType.SequenceTerminator, string.Empty));
 
             return tokens;
         }

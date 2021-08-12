@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace OlapParser.Parsing.Tokens
 {
-    public class DslToken
+    public class Token
     {
-        public DslToken(TokenType tokenType)
+        public Token(TokenType tokenType)
         {
             TokenType = tokenType;
             Value = string.Empty;
         }
 
-        public DslToken(TokenType tokenType, string value)
+        public Token(TokenType tokenType, string value)
         {
             TokenType = tokenType;
             Value = value;
@@ -23,9 +18,9 @@ namespace OlapParser.Parsing.Tokens
         public TokenType TokenType { get; set; }
         public string Value { get; set; }
 
-        public DslToken Clone()
+        public Token Clone()
         {
-            return new DslToken(TokenType, Value);
+            return new Token(TokenType, Value);
         }
     }
 }

@@ -44,34 +44,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataRepresentation\DateRange.cs" />
     <Compile Include="DataRepresentation\LogicalOperator.cs" />
-    <Compile Include="DataRepresentation\DslLogicalOperator.cs" />
-    <Compile Include="DataRepresentation\DslFunction.cs" />
-    <Compile Include="DataRepresentation\DslObject.cs" />
-    <Compile Include="DataRepresentation\DslOperator.cs" />
+    <Compile Include="DataRepresentation\DaxFunction.cs" />
     <Compile Include="DataRepresentation\OlapQueryModel.cs" />
-    <Compile Include="DataRepresentation\DslQueryModel.cs" />
     <Compile Include="DataRepresentation\FilterStruct.cs" />
-    <Compile Include="DataRepresentation\MatchCondition.cs" />
-    <Compile Include="Entities\ErrorCountRecord.cs" />
-    <Compile Include="Exceptions\DslParserException.cs" />
     <Compile Include="MdxGeneration\MdxGenerator.cs" />
     <Compile Include="MdxGeneration\ParseManager.cs" />
     <Compile Include="Parsing\Tokenizers\ITokenizer.cs" />
-    <Compile Include="Parsing\Tokenizers\MoreEfficient\MoreEfficientRegexTokenizer.cs" />
-    <Compile Include="Parsing\Tokenizers\MoreEfficient\TokenDefinition.cs" />
-    <Compile Include="Parsing\Tokenizers\MoreEfficient\TokenMatch.cs" />
     <Compile Include="Parsing\Tokenizers\SlowAndSimple\SimpleRegexTokenizer.cs" />
     <Compile Include="Parsing\Parser.cs" />
-    <Compile Include="Parsing\Tokens\DslToken.cs" />
+    <Compile Include="Parsing\Tokens\Token.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Parsing\Tokenizers\SlowAndSimple\TokenDefinition.cs" />
     <Compile Include="Parsing\Tokenizers\SlowAndSimple\TokenMatch.cs" />
     <Compile Include="Parsing\Tokens\TokenType.cs" />
-    <Compile Include="SqlGeneration\AdoQueryPayload.cs" />
-    <Compile Include="SqlGeneration\SqlExecutor.cs" />
-    <Compile Include="SqlGeneration\SqlGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

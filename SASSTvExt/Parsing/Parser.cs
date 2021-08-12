@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OlapParser.DataRepresentation;
-using OlapParser.Exceptions;
 using OlapParser.Parsing.Tokens;
 using System.Text.RegularExpressions;
 
@@ -13,18 +9,16 @@ namespace OlapParser.Parsing
 {
     public class Parser
     {
-        private Stack<DslToken> _tokenSequence;
-        private DslToken _lookaheadFirst;
-        private DslToken _lookaheadSecond;
+        private Stack<Token> _tokenSequence;
+        private Token _lookaheadFirst;
+        private Token _lookaheadSecond;
 
-        private DslQueryModel _queryModel;
         private OlapQueryModel _queryModel1;
-        private MatchCondition _currentMatchCondition;
         private FilterStruct _currentFilterStruct;
 
         private const string ExpectedObjectErrorText = "Expected =, !=, LIKE, NOT LIKE, IN or NOT IN but found: ";
 
-        public OlapQueryModel ParseEval(List<DslToken> tokens)
+        public OlapQueryModel ParseEval(List<Token> tokens)
         {
             LoadSequenceStack(tokens);
             PrepareLookaheads();
@@ -37,9 +31,9 @@ namespace OlapParser.Parsing
             return _queryModel1;
         }
 
-        private void LoadSequenceStack(List<DslToken> tokens)
+        private void LoadSequenceStack(List<Token> tokens)
         {
-            _tokenSequence = new Stack<DslToken>();
+            _tokenSequence = new Stack<Token>();
             int count = tokens.Count;
             for (int i = count - 1; i >= 0; i--)
             {
@@ -53,7 +47,7 @@ namespace OlapParser.Parsing
             _lookaheadSecond = _tokenSequence.Pop();
         }
 
-        private DslToken ReadToken(TokenType tokenType)
+        private Token ReadToken(TokenType tokenType)
         {
             if (_lookaheadFirst.TokenType != tokenType)
                 throw new ArgumentException(string.Format("Expected {0} but found: {1}", tokenType.ToString().ToUpper(), _lookaheadFirst.Value));
@@ -61,7 +55,7 @@ namespace OlapParser.Parsing
             return _lookaheadFirst;
         }
 
-        private DslToken DiscardToken()
+        private Token DiscardToken()
         {
             var res = _lookaheadFirst;
 
@@ -70,14 +64,14 @@ namespace OlapParser.Parsing
             if (_tokenSequence.Any())
                 _lookaheadSecond = _tokenSequence.Pop();
             else
-                _lookaheadSecond = new DslToken(TokenType.SequenceTerminator, string.Empty);
+                _lookaheadSecond = new Token(TokenType.SequenceTerminator, string.Empty);
 
             Console.WriteLine(string.Format("{0} \t {1}", _lookaheadFirst.TokenType, _lookaheadFirst.Value));
 
             return res;
         }
 
-        private DslToken DiscardToken(TokenType tokenType)
+        private Token DiscardToken(TokenType tokenType)
         {
             if (_lookaheadFirst.TokenType != tokenType)
                 throw new ArgumentException(string.Format("Expected {0} but found: {1}", tokenType.ToString().ToUpper(), _lookaheadFirst.Value));
@@ -369,23 +363,9 @@ namespace OlapParser.Parsing
             }
         }
 
-        private void StringLiteralListNext()
-        {
-            if (_lookaheadFirst.TokenType == TokenType.Comma)
-            {
-                DiscardToken(TokenType.Comma);
-                _currentMatchCondition.Values.Add(ReadToken(TokenType.StringValue).Value);
-                DiscardToken(TokenType.StringValue);
-                StringLiteralListNext();
-            }
-            else
-            {
-                // nothing
-            }
-        }
 
         //todo refactor (using getFunction)
-        private bool IsFunction(DslToken token)
+        private bool IsFunction(Token token)
         {
             return token.TokenType == TokenType.Keepfilters
                 || token.TokenType == TokenType.Calculatetable
