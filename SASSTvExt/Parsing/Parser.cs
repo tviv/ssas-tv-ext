@@ -359,110 +359,6 @@ namespace OlapParser.Parsing
 
             }
         }
-        private void SkipFunctionNext()
-        {
-            if (_lookaheadFirst.TokenType == TokenType.CloseParenthesis)
-            {
-                DiscardToken(TokenType.Comma);
-                _currentMatchCondition.Values.Add(ReadToken(TokenType.StringValue).Value);
-                DiscardToken(TokenType.StringValue);
-                StringLiteralListNext();
-            }
-            else
-            {
-                // nothing
-            }
-        }
-
-        
-        private void EqualityMatchCondition()
-        {
-            _currentMatchCondition.Object = GetObject(_lookaheadFirst);
-            DiscardToken();
-            _currentMatchCondition.Operator = GetOperator(_lookaheadFirst);
-            DiscardToken();
-            _currentMatchCondition.Value = _lookaheadFirst.Value;
-            DiscardToken();
-        }
-
-        private DslObject GetObject(DslToken token)
-        {
-            switch (token.TokenType)
-            {
-                case TokenType.Application:
-                    return DslObject.Application;
-                case TokenType.ExceptionType:
-                    return DslObject.ExceptionType;
-                case TokenType.Fingerprint:
-                    return DslObject.Fingerprint;
-                case TokenType.Message:
-                    return DslObject.Message;
-                case TokenType.StackFrame:
-                    return DslObject.StackFrame;
-                default:
-                    throw new ArgumentException(ExpectedObjectErrorText + token.Value);
-            }
-        }
-
-        private DaxFunction GetFunction(DslToken token)
-        {
-            switch (token.TokenType)
-            {
-                case TokenType.Keepfilters:
-                    return DaxFunction.KEEPFILTERS;
-                default:
-                    throw new ArgumentException(ExpectedObjectErrorText + token.Value);
-            }
-        }
-
-        private DslOperator GetOperator(DslToken token)
-        {
-            switch (token.TokenType)
-            {
-                case TokenType.Equals:
-                    return DslOperator.Equals;
-                case TokenType.NotEquals:
-                    return DslOperator.NotEquals;
-                case TokenType.Like:
-                    return DslOperator.Like;
-                case TokenType.NotLike:
-                    return DslOperator.NotLike;
-                case TokenType.In:
-                    return DslOperator.In;
-                case TokenType.NotIn:
-                    return DslOperator.NotIn;
-                default:
-                    throw new ArgumentException("Expected =, !=, LIKE, NOT LIKE, IN, NOT IN but found: " + token.Value);
-            }
-        }
-
-        private void NotInCondition()
-        {
-            ParseInCondition(DslOperator.NotIn);
-        }
-
-        private void InCondition()
-        {
-            ParseInCondition(DslOperator.In);
-        }
-
-        private void ParseInCondition(DslOperator inOperator)
-        {
-            _currentMatchCondition.Operator = inOperator;
-            _currentMatchCondition.Values = new List<string>();
-            _currentMatchCondition.Object = GetObject(_lookaheadFirst);
-            DiscardToken();
-
-            if (inOperator == DslOperator.In)
-                DiscardToken(TokenType.In);
-            else if (inOperator == DslOperator.NotIn)
-                DiscardToken(TokenType.NotIn);
-
-            DiscardToken(TokenType.OpenParenthesis);
-            StringLiteralList();
-            DiscardToken(TokenType.CloseParenthesis);
-        }
-
 
         private void ParseOrderBy()
         {
@@ -471,20 +367,6 @@ namespace OlapParser.Parsing
             {
                 DiscardToken();
             }
-        }
-
-        private void StringLiteralList()
-        {
-            _currentMatchCondition.Values.Add(ReadToken(TokenType.StringValue).Value);
-            DiscardToken(TokenType.StringValue);
-            StringLiteralListNext();
-        }
-
-        private void StringLiteralList2()
-        {
-            //_currentFilterStruct.Value = ReadToken(TokenType.StringValue).Value;
-            DiscardToken(TokenType.StringValue);
-            //StringLiteralListNext();
         }
 
         private void StringLiteralListNext()
@@ -502,59 +384,6 @@ namespace OlapParser.Parsing
             }
         }
 
-
-        private void DateCondition()
-        {
-            DiscardToken(TokenType.Between);
-
-            _queryModel.DateRange = new DateRange();
-            _queryModel.DateRange.From = DateTime.ParseExact(ReadToken(TokenType.DateTimeValue).Value, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-            DiscardToken(TokenType.DateTimeValue);
-            DiscardToken(TokenType.And);
-            _queryModel.DateRange.To = DateTime.ParseExact(ReadToken(TokenType.DateTimeValue).Value, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-            DiscardToken(TokenType.DateTimeValue);
-            DateConditionNext();
-        }
-
-        private void DateConditionNext()
-        {
-            if (_lookaheadFirst.TokenType == TokenType.Limit)
-            {
-                Limit();
-            }
-            else if (_lookaheadFirst.TokenType == TokenType.SequenceTerminator)
-            {
-                // nothing
-            }
-            else
-            {
-                throw new ArgumentException("Expected LIMIT or the end of the query but found: " + _lookaheadFirst.Value);
-            }
-
-        }
-
-        private void Limit()
-        {
-            DiscardToken(TokenType.Limit);
-            int limit = 0;
-            bool success = int.TryParse(ReadToken(TokenType.Number).Value, out limit);
-            if (success)
-                _queryModel.Limit = limit;
-            else
-                throw new ArgumentException("Expected an integer number but found " + ReadToken(TokenType.Number).Value);
-
-            DiscardToken(TokenType.Number);
-        }
-
-        private bool IsObject(DslToken token)
-        {
-            return token.TokenType == TokenType.Application
-                   || token.TokenType == TokenType.ExceptionType
-                   || token.TokenType == TokenType.Fingerprint
-                   || token.TokenType == TokenType.Message
-                   || token.TokenType == TokenType.StackFrame;
-        }
-
         //todo refactor (using getFunction)
         private bool IsFunction(DslToken token)
         {
@@ -566,20 +395,6 @@ namespace OlapParser.Parsing
                 || token.TokenType == TokenType.And
                 || token.TokenType == TokenType.Or
                 || token.TokenType == TokenType.Not;
-        }
-
-        private bool IsEqualityOperator(DslToken token)
-        {
-            return token.TokenType == TokenType.Equals
-                   || token.TokenType == TokenType.NotEquals
-                   || token.TokenType == TokenType.Like
-                   || token.TokenType == TokenType.NotLike;
-        }
-
-        private void CreateNewMatchCondition()
-        {
-            _currentMatchCondition = new MatchCondition();
-            _queryModel.MatchConditions.Add(_currentMatchCondition);
         }
 
         private void CreateNewCondClause()
