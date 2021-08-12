@@ -26,10 +26,9 @@ Assert.AreEqual(@"({[Dates].[Date].&[2019-04-01T00:00:00],[Dates].[Date].&[2019-
 
 This was used in SSAS extension in the implementation of own "Existing" function:
 ```cs
-public static Set getContextSetFromQuery(string dimName, string hierName)
+public static Set getContextSetFromQuery(string dimName, string hierName, string query) //query is received from DMV's session last command
 {
     var res = "";
-    string query = getCurrentQuery();
     if (DaxConverter.isDAX(query))
     {
         var text = removeComments(query);
