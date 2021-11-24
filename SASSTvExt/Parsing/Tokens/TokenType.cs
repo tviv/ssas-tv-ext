@@ -24,6 +24,7 @@ namespace OlapParser.Parsing.Tokens
         NotLike,
         Number,
         Or,
+        Isblank,
         OpenParenthesis,
         StackFrame,
         StringValue,

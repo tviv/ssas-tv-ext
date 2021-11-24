@@ -50,6 +50,7 @@ namespace OlapParser.Parsing.Tokenizers.SlowAndSimple
             _tokenDefinitions.Add(new TokenDefinition(TokenType.OrderBy, "^order by"));
             _tokenDefinitions.Add(new TokenDefinition(TokenType.Or, "^or"));
             _tokenDefinitions.Add(new TokenDefinition(TokenType.Not, "^not"));
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.Isblank, "^isblank"));
             _tokenDefinitions.Add(new TokenDefinition(TokenType.SomeFunction, @"^(?<value>\S+?)\s*\("));
 
 

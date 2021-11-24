@@ -260,9 +260,13 @@ namespace OlapParser.Parsing
             {
                 SkipFunction(); //todo it here temprarilly
             }
+            else if (IsFirst(TokenType.Isblank))
+            {
+                SkipFunction(); //todo it here temprarilly
+            }
             else
             {
-                throw new ArgumentException(string.Format("Expected NOT or OR but found: {0}", _lookaheadFirst.Value));
+                throw new ArgumentException(string.Format("Expected NOT, OR, ISBLANK but found: {0}", _lookaheadFirst.Value));
             }
         }
 
@@ -374,7 +378,8 @@ namespace OlapParser.Parsing
                 || token.TokenType == TokenType.Values
                 || token.TokenType == TokenType.And
                 || token.TokenType == TokenType.Or
-                || token.TokenType == TokenType.Not;
+                || token.TokenType == TokenType.Not
+                || token.TokenType == TokenType.Isblank;
         }
 
         private void CreateNewCondClause()
